@@ -21,7 +21,7 @@ const t = useTranslations(locale);
 ---
 
 <Layout title={`${t.pages.postsTitle} | ${config.site.title}`}>
-  <BlogLayout headings={[]} showToc={false}>
+  <BlogLayout headings={[]} showToc={false} showRecent={false}>
     <main id="main-content" class="posts-list-content" data-pagefind-body>
       <h1 class="page-title">{t.pages.postsTitle}</h1>
       <p class="page-desc">{t.pages.postsDesc}</p>
@@ -33,7 +33,6 @@ const t = useTranslations(locale);
       <Pagination {page} />
     </main>
   </BlogLayout>
-
 </Layout>
 
 <style>

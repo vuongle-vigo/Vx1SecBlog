@@ -44,7 +44,15 @@
     }
 
     img {
-      @apply border-border mx-auto border;
+      @apply border-border mx-auto rounded-lg border;
+    }
+
+    /* Screenshots with white backgrounds glare in dark mode; frame them. */
+    html[data-theme="dark"] & {
+      img {
+        background: #ffffff;
+        padding: 0.375rem;
+      }
     }
 
     img[role="button"] {

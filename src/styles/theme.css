@@ -20,15 +20,19 @@
   --muted: #e6e6e6;
   --muted-foreground: #6b7280;
   --border: #ece9e9;
+  /* RGB triplet of --accent for rgba() usages */
+  --rgb-accent: 0, 108, 172;
 }
 
 /* Dark theme values */
 [data-theme="dark"] {
   --background: #212737;
   --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --accent-foreground: #ffffff;
+  --accent: #38bdf8;
+  --accent-foreground: #06283d;
   --muted: #343f60;
   --muted-foreground: #afb9ca;
-  --border: #ab4b08;
+  --border: #3d4666;
+  /* RGB triplet of --accent for rgba() usages */
+  --rgb-accent: 56, 189, 248;
 }

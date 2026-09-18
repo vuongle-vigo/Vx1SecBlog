@@ -1,10 +1,15 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import PostLayout from "@/layouts/PostLayout.astro";
 import BlogLayout from "@/components/BlogLayout.astro";
 import Datetime from "@/components/Datetime.astro";
 import Tag from "@/components/Tag.astro";
 import { getPostSlug, getPostUrl } from "@/utils/getPostPaths";
+import {
+  getPostCategorySlug,
+  categorySlugToTitle,
+} from "@/utils/getCategories";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
 import { toTransitionName } from "@/utils/toTransitionName";
@@ -74,6 +79,12 @@ const {
 
 const { Content, headings } = await render(post);
 
+// Category comes from the first folder level under src/content/posts
+const postCategorySlug = getPostCategorySlug(post.filePath);
+const postCategoryTitle = postCategorySlug
+  ? categorySlugToTitle(postCategorySlug)
+  : undefined;
+
 let ogImageUrl: string | undefined;
 
 if (typeof initOgImage === "string") {
@@ -106,55 +117,76 @@ const ogImage = ogImageUrl
   <BlogLayout headings={headings} showToc={true}>
     <main
       id="main-content"
-      class:list={["blog-post-content", { "mt-8": !config.features.showBackButton }]}
+      class:list={[
+        "blog-post-content",
+        { "mt-8": !config.features.showBackButton },
+      ]}
       data-pagefind-body
     >
       <BackButton />
-    <h1
-      style={{ viewTransitionName: toTransitionName(post.id) }}
-      class="text-accent inline-block text-2xl font-bold sm:text-3xl"
-    >
-      {title}
-    </h1>
+      <h1
+        style={{ viewTransitionName: toTransitionName(post.id) }}
+        class="text-accent inline-block text-2xl font-bold sm:text-3xl"
+      >
+        {title}
+      </h1>
 
-    <div class="my-2 flex items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
-      <span
-        aria-hidden="true"
+      <div class="my-2 flex items-center gap-2">
+        {
+          postCategorySlug && postCategoryTitle && (
+            <Fragment>
+              <a
+                href={getRelativeLocaleUrl(
+                  locale,
+                  `categories/${postCategorySlug}`
+                )}
+                class="text-accent text-sm font-semibold tracking-wide uppercase hover:underline"
+              >
+                {postCategoryTitle}
+              </a>
+              <span aria-hidden="true" class="text-muted-foreground">
+                ·
+              </span>
+            </Fragment>
+          )
+        }
+        <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+        <span
+          aria-hidden="true"
+          class:list={[
+            "text-muted-foreground max-sm:hidden",
+            { hidden: !config.features.editPost?.enabled || hideEditPost },
+          ]}
+        >
+          |
+        </span>
+        <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+      </div>
+
+      <article
+        id="article"
         class:list={[
-          "text-muted-foreground max-sm:hidden",
-          { hidden: !config.features.editPost?.enabled || hideEditPost },
+          "mt-8 w-full",
+          "app-prose max-w-app",
+          "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
         ]}
       >
-        |
-      </span>
-      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
-    </div>
+        <Content />
+      </article>
 
-    <article
-      id="article"
-      class:list={[
-        "mt-8 w-full",
-        "app-prose max-w-app",
-        "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
-      ]}
-    >
-      <Content />
-    </article>
+      <hr class="my-8 border-dashed" />
 
-    <hr class="my-8 border-dashed" />
+      <EditPost class="sm:hidden" {hideEditPost} {post} />
 
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
+      <BackToTopButton />
 
-    <BackToTopButton />
+      <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
+        {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
+      </ul>
 
-    <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
-    </ul>
+      <ShareLinks />
 
-    <ShareLinks />
-
-    <hr class="my-8 border-dashed" />
+      <hr class="my-8 border-dashed" />
 
       <AdjacentPostNav {prevPost} {nextPost} />
     </main>

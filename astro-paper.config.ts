@@ -2,11 +2,12 @@ import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
   site: {
-    url: "https://astro-paper.pages.dev/",
+    // TODO: replace with the real production domain if different from GitHub Pages
+    url: "https://vuongle-vigo.github.io/Vx1SecBlog/",
     title: "Vx1Sec",
     description: "Security, malware analysis, red team & blue team insights",
     author: "Vigo",
-    profile: "https://satna.ing",
+    profile: "https://github.com/vuongle-vigo",
     ogImage: "default-og.jpg",
     lang: "en",
     timezone: "Asia/Bangkok",
@@ -24,7 +25,7 @@ export default defineAstroPaperConfig({
     showBackButton: true,
     editPost: {
       enabled: true,
-      url: "https://github.com/satnaing/astro-paper/edit/main/",
+      url: "https://github.com/vuongle-vigo/Vx1SecBlog/edit/main/",
     },
     search: "pagefind",
   },

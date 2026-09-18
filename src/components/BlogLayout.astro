@@ -3,21 +3,25 @@ import LeftSidebar from "./LeftSidebar.astro";
 import TableOfContents from "./TableOfContents.astro";
 import RecentPosts from "./RecentPosts.astro";
 import MobileMenuToggle from "./MobileMenuToggle.astro";
+import Footer from "./Footer.astro";
 
 type Props = {
   headings?: { depth: number; slug: string; text: string }[];
   showToc?: boolean;
+  /** Whether to render the right rail (TOC or Recent Posts). */
+  showRecent?: boolean;
 };
 
-const { headings = [], showToc = true } = Astro.props;
+const { headings = [], showToc = true, showRecent = true } = Astro.props;
 
 // Always show TOC if there are valid headings (depth 2-4)
 const hasToc = headings.some(h => h.depth >= 2 && h.depth <= 4);
+const showRail = hasToc || showRecent;
 ---
 
 <MobileMenuToggle />
 
-<div class="blog-shell">
+<div class:list={["blog-shell", { "no-rail": !showRail }]}>
   <!-- Left sidebar: Navigation & content -->
   <aside class="blog-rail blog-rail-left" id="mobile-menu">
     <LeftSidebar />
@@ -26,18 +30,17 @@ const hasToc = headings.some(h => h.depth >= 2 && h.depth <= 4);
   <!-- Main content -->
   <div class="blog-col-main">
     <slot />
+    <Footer noMarginTop />
   </div>
 
   <!-- Right sidebar: Table of contents or Recent Posts -->
-  <aside class="blog-rail blog-rail-right">
-    {
-      hasToc ? (
-        <TableOfContents headings={headings} />
-      ) : (
-        <RecentPosts />
-      )
-    }
-  </aside>
+  {
+    showRail && (
+      <aside class="blog-rail blog-rail-right">
+        {hasToc ? <TableOfContents headings={headings} /> : <RecentPosts />}
+      </aside>
+    )
+  }
 </div>
 
 <style>
@@ -55,6 +58,8 @@ const hasToc = headings.some(h => h.depth >= 2 && h.depth <= 4);
 
   .blog-col-main {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Tablet & Desktop: 2-column layout */
@@ -80,6 +85,10 @@ const hasToc = headings.some(h => h.depth >= 2 && h.depth <= 4);
       grid-template-columns: 16rem 1fr 15rem;
     }
 
+    .blog-shell.no-rail {
+      grid-template-columns: 16rem 1fr;
+    }
+
     .blog-rail-right {
       position: sticky;
       top: 0;
@@ -92,11 +101,15 @@ const hasToc = headings.some(h => h.depth >= 2 && h.depth <= 4);
     }
   }
 
-  /* Mobile: hide sidebars */
+  /* Mobile: hide sidebars, keep content clear of the floating menu button */
   @media (width < 768px) {
     .blog-rail-left,
     .blog-rail-right {
       display: none;
+    }
+
+    .blog-col-main {
+      padding-top: 4.5rem;
     }
 
     .blog-rail-left.mobile-open {

@@ -2,9 +2,7 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 import "@pagefind/default-ui/css/ui.css";
 import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Breadcrumb from "@/components/Breadcrumb.astro";
-import Main from "@/components/Main.astro";
+import BlogLayout from "@/components/BlogLayout.astro";
 import { getAssetPath } from "@/utils/withBase";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -27,20 +25,43 @@ const t = useTranslations(locale);
 ---
 
 <Layout title={`${t.pages.searchTitle} | ${config.site.title}`}>
-  <Header />
+  <BlogLayout headings={[]} showToc={false} showRecent={false}>
+    <main id="main-content" class="search-content" data-pagefind-body>
+      <h1 class="page-title">{t.pages.searchTitle}</h1>
+      <p class="page-desc">{t.pages.searchDesc}</p>
 
-  <Breadcrumb />
-
-  <Main pageTitle={t.pages.searchTitle} pageDesc={t.pages.searchDesc}>
-    <div
-      id="pagefind-search"
-      transition:persist
-      data-backurl={backUrl}
-      data-bundle-path={pagefindBundlePath}
-    >
-    </div>
-  </Main>
+      <div
+        id="pagefind-search"
+        transition:persist
+        data-backurl={backUrl}
+        data-bundle-path={pagefindBundlePath}
+      >
+      </div>
+    </main>
+  </BlogLayout>
 </Layout>
+
+<style>
+  .search-content {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .page-desc {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+</style>
 
 <script>
   function initSearch() {

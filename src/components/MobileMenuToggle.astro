@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <button
@@ -90,18 +91,18 @@
   function initMobileMenu() {
     const toggle = document.getElementById("mobile-menu-toggle");
     const backdrop = document.getElementById("mobile-menu-backdrop");
-    const leftRail = document.querySelector(".blog-rail-left");
+    const leftRail = document.querySelector<HTMLElement>(".blog-rail-left");
 
     if (!toggle || !backdrop || !leftRail) return;
 
     let isOpen = false;
 
-    function toggleMenu() {
+    const toggleMenu = () => {
       isOpen = !isOpen;
       toggle.setAttribute("aria-expanded", isOpen.toString());
       backdrop.classList.toggle("active", isOpen);
       leftRail.classList.toggle("mobile-open", isOpen);
-    }
+    };
 
     toggle.addEventListener("click", toggleMenu);
     backdrop.addEventListener("click", () => {
@@ -109,8 +110,9 @@
     });
 
     // Close menu when clicking a link
-    leftRail.addEventListener("click", (e) => {
-      if (e.target.tagName === "A" && isOpen) {
+    leftRail.addEventListener("click", e => {
+      const target = e.target as HTMLElement | null;
+      if (isOpen && target?.closest("a")) {
         toggleMenu();
       }
     });

@@ -22,11 +22,7 @@ const { Content, headings } = await render(about);
   canonicalURL={about.data.canonicalURL}
 >
   <BlogLayout headings={headings} showToc={true}>
-    <main
-      id="main-content"
-      class="about-content"
-      data-pagefind-body
-    >
+    <main id="main-content" class="about-content" data-pagefind-body>
       <h1 class="page-title">{about.data.title}</h1>
 
       <article class="app-prose">
@@ -34,7 +30,6 @@ const { Content, headings } = await render(about);
       </article>
     </main>
   </BlogLayout>
-
 </Layout>
 
 <style>

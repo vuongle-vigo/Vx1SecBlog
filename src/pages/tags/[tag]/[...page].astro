@@ -2,9 +2,7 @@
 import { getCollection } from "astro:content";
 import type { GetStaticPathsOptions } from "astro";
 import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Main from "@/components/Main.astro";
-import Breadcrumb from "@/components/Breadcrumb.astro";
+import BlogLayout from "@/components/BlogLayout.astro";
 import Card from "@/components/Card.astro";
 import Pagination from "@/components/Pagination.astro";
 import { getUniqueTags } from "@/utils/getUniqueTags";
@@ -37,18 +35,48 @@ const t = useTranslations(locale);
 ---
 
 <Layout title={`${t.pages.tagTitle}: ${tagName} | ${config.site.title}`}>
-  <Header />
+  <BlogLayout headings={[]} showToc={false} showRecent={false}>
+    <main id="main-content" class="tag-content" data-pagefind-body>
+      <h1 class="page-title">
+        {t.pages.tagTitle}: {tagName}
+      </h1>
+      <p class="page-desc">
+        {t.pages.tagDesc} "{tagName}".
+      </p>
 
-  <Breadcrumb />
+      <div class="posts-grid">
+        {page.data.map(data => <Card {...data} />)}
+      </div>
 
-  <Main
-    pageTitle={`${t.pages.tagTitle}: ${tagName}`}
-    pageDesc={`${t.pages.tagDesc} "${tagName}".`}
-  >
-    <ul>
-      {page.data.map(data => <Card {...data} />)}
-    </ul>
-  </Main>
-
-  <Pagination {page} />
+      <Pagination {page} />
+    </main>
+  </BlogLayout>
 </Layout>
+
+<style>
+  .tag-content {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .page-desc {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .posts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+</style>

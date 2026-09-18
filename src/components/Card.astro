@@ -13,7 +13,9 @@ const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 const { title, description, ...props } = data;
 ---
 
-<li class="my-6">
+<li
+  class="group hover:border-accent my-6 border-s-2 border-transparent ps-0 transition-all duration-200 hover:ps-3"
+>
   <a
     href={getPostUrl(id, filePath, Astro.currentLocale)}
     class:list={[
@@ -27,5 +29,5 @@ const { title, description, ...props } = data;
     </Heading>
   </a>
   <Datetime {...props} />
-  <p>{description}</p>
+  <p class="opacity-75">{description}</p>
 </li>

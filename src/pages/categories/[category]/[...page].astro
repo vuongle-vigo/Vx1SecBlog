@@ -6,79 +6,45 @@ import BlogLayout from "@/components/BlogLayout.astro";
 import Card from "@/components/Card.astro";
 import Pagination from "@/components/Pagination.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import {
+  getPostCategorySlug,
+  getUniqueCategories,
+  UNCATEGORIZED_SLUG,
+} from "@/utils/getCategories";
 import config from "@/config";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getCollection("posts", ({ data }) => !data.draft);
   const sortedPosts = getSortedPosts(posts);
 
-  // Category mapping (same as LeftSidebar)
-  const categoryMapping: Record<string, string> = {
-    "adding-new-post": "Documentation",
-    "how-to-configure": "Customization",
-    "dynamic-og-images": "Features",
-    "how-to-add-latex": "Tutorials",
-    "how-to-integrate-giscus": "Tutorials",
-    "how-to-update-dependencies": "Tutorials",
-    "setting-dates-via-git": "Tutorials",
-    "customizing-color-schemes": "Customization",
-  };
+  // Categories come from the first folder level under src/content/posts,
+  // e.g. posts/malware-analysis/<post>/post.md -> "malware-analysis".
+  const categories = getUniqueCategories(sortedPosts);
 
-  // Function to detect category (same as LeftSidebar)
-  const detectCategory = (slug: string): string | undefined => {
-    if (slug.includes("malware") || slug.includes("payload") || slug.includes("injection") ||
-        slug.includes("syscall") || slug.includes("hooking") || slug.includes("obfuscation") ||
-        slug.includes("encryption") || slug.includes("sideload") || slug.includes("unhook") ||
-        slug.includes("iat") || slug.includes("macro") || slug.includes("bypass")) {
-      return "Malware Analysis";
-    }
-    for (const [key, cat] of Object.entries(categoryMapping)) {
-      if (slug.includes(key)) {
-        return cat;
-      }
-    }
-    return undefined;
-  };
+  return categories.flatMap(({ slug, title }) => {
+    const categoryPosts = sortedPosts.filter(
+      post =>
+        (getPostCategorySlug(post.filePath) ?? UNCATEGORIZED_SLUG) === slug
+    );
 
-  // Get all unique categories from posts
-  const categories = new Set<string>();
-  sortedPosts.forEach(post => {
-    const category = detectCategory(post.id);
-    if (category) {
-      categories.add(category);
-    }
-  });
-
-  // Create paginated paths for each category
-  const paths: any = [];
-  categories.forEach(category => {
-    const categoryPosts = sortedPosts.filter(post => {
-      return detectCategory(post.id) === category;
+    return paginate(categoryPosts, {
+      params: { category: slug },
+      props: { categoryTitle: title },
+      pageSize: config.posts.perPage,
     });
-
-    if (categoryPosts.length > 0) {
-      const paginatedPaths = paginate(categoryPosts, {
-        params: { category },
-        pageSize: config.posts.perPage,
-      });
-      paths.push(...paginatedPaths);
-    }
   });
-
-  return paths;
 }) satisfies GetStaticPaths;
 
-const { page } = Astro.props;
-const { category } = Astro.params;
+const { page, categoryTitle } = Astro.props;
 ---
 
-<Layout title={`${category} | ${config.site.title}`}>
-  <BlogLayout headings={[]} showToc={false}>
+<Layout title={`${categoryTitle} | ${config.site.title}`}>
+  <BlogLayout headings={[]} showToc={false} showRecent={false}>
     <main id="main-content" class="category-content" data-pagefind-body>
-      <h1 class="page-title">
-        <span class="category-badge">{category}</span>
-      </h1>
-      <p class="page-desc">Posts in {category} category</p>
+      <h1 class="page-title">{categoryTitle}</h1>
+      <p class="page-desc">
+        {`${page.total} ${page.total === 1 ? "post" : "posts"}`}
+      </p>
 
       <div class="posts-grid">
         {page.data.map(data => <Card {...data} />)}
@@ -87,7 +53,6 @@ const { category } = Astro.params;
       <Pagination {page} />
     </main>
   </BlogLayout>
-
 </Layout>
 
 <style>
@@ -101,19 +66,8 @@ const { category } = Astro.params;
   .page-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     color: var(--color-accent);
-  }
-
-  .category-badge {
-    background: rgba(var(--rgb-accent), 0.1);
-    border: 1px solid var(--color-accent);
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 
   .page-desc {

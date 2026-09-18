@@ -11,6 +11,9 @@ function getPostPathSegments(filePath: string | undefined): string[] {
       .filter(path => path !== "")
       .filter(path => !path.startsWith("_"))
       .slice(0, -1)
+      // The first folder level is the category (e.g. src/content/posts/<category>/<post>/post.md);
+      // it drives the site's category display and is not part of the post URL.
+      .slice(1)
       .map(segment => slugifyStr(segment)) ?? []
   );
 }

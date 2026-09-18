@@ -5,6 +5,9 @@ import { useTranslations } from "@/i18n";
 import config from "@/config";
 import { stripBase, stripLocale } from "@/utils/withBase";
 import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getUniqueCategories } from "@/utils/getCategories";
+import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
+import IconMoon from "@/assets/icons/IconMoon.svg";
 import Socials from "./Socials.astro";
 
 const locale = Astro.currentLocale ?? config.site.lang;
@@ -24,52 +27,11 @@ const isActive = (path: string) => {
   return currentPath === path || currentPathArray[0] === pathArray[0];
 };
 
-// Get all posts and extract categories
+// Get all posts and extract categories from the first folder level
+// under src/content/posts (e.g. posts/malware-analysis/<post>/post.md)
 const allPosts = await getCollection("posts", ({ data }) => !data.draft);
 const sortedPosts = getSortedPosts(allPosts);
-
-// Get unique categories with post count
-const categoryMapping: Record<string, string> = {
-  "adding-new-post": "Documentation",
-  "how-to-configure": "Customization",
-  "dynamic-og-images": "Features",
-  "how-to-add-latex": "Tutorials",
-  "how-to-integrate-giscus": "Tutorials",
-  "how-to-update-dependencies": "Tutorials",
-  "setting-dates-via-git": "Tutorials",
-  "customizing-color-schemes": "Customization",
-};
-
-const categoriesMap = new Map<string, number>();
-sortedPosts.forEach(post => {
-  const slug = post.id;
-  let category: string | undefined;
-
-  // Check for Malware Analysis (new posts have directory name "malware-development" or slug contains it)
-  if (slug.includes("malware") || slug.includes("payload") || slug.includes("injection") ||
-      slug.includes("syscall") || slug.includes("hooking") || slug.includes("obfuscation") ||
-      slug.includes("encryption") || slug.includes("sideload") || slug.includes("unhook") ||
-      slug.includes("iat") || slug.includes("macro") || slug.includes("bypass")) {
-    category = "Malware Analysis";
-  } else {
-    // Fall back to mapping for older posts
-    for (const [key, cat] of Object.entries(categoryMapping)) {
-      if (slug.includes(key)) {
-        category = cat;
-        break;
-      }
-    }
-  }
-
-  if (category) {
-    const count = categoriesMap.get(category) || 0;
-    categoriesMap.set(category, count + 1);
-  }
-});
-
-// Sort categories by post count (descending)
-const categories = Array.from(categoriesMap.entries())
-  .sort((a, b) => b[1] - a[1]);
+const categories = getUniqueCategories(sortedPosts);
 ---
 
 <nav class="sidebar-nav">
@@ -96,16 +58,16 @@ const categories = Array.from(categoriesMap.entries())
               <span class="count">{sortedPosts.length}</span>
             </a>
           </li>
-          {categories.map(([category, count]) => (
+          {categories.map(({ slug, title, count }) => (
             <li>
               <a
-                href={`/categories/${category}`}
+                href={getRelativeLocaleUrl(locale, `categories/${slug}`)}
                 class:list={[
                   "category-link",
-                  { active: currentPath.includes(category) },
+                  { active: currentPath.includes(`/categories/${slug}`) },
                 ]}
               >
-                {category}
+                {title}
                 <span class="count">{count}</span>
               </a>
             </li>
@@ -119,6 +81,18 @@ const categories = Array.from(categoriesMap.entries())
   <div class="nav-section">
     <div class="nav-section-title">More</div>
     <ul class="nav-menu">
+      {
+        config.features.search !== false && (
+          <li>
+            <a
+              href={getRelativeLocaleUrl(locale, "search")}
+              class:list={["nav-link", { active: isActive("/search") }]}
+            >
+              Search
+            </a>
+          </li>
+        )
+      }
       <li>
         <a
           href={getRelativeLocaleUrl(locale, "tags")}
@@ -150,9 +124,33 @@ const categories = Array.from(categoriesMap.entries())
     </ul>
   </div>
 
-  <!-- Social links -->
-  <div class="sidebar-socials">
-    <Socials />
+  <!-- Social links & theme toggle -->
+  <div class="sidebar-footer">
+    <div class="sidebar-socials">
+      <Socials />
+    </div>
+    {
+      config.features.lightAndDarkMode && (
+        <button
+          id="theme-btn"
+          class="theme-toggle"
+          title={t.a11y.toggleTheme}
+          aria-label="auto"
+          aria-live="polite"
+        >
+          <IconMoon
+            width={18}
+            height={18}
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+          />
+          <IconSunHigh
+            width={18}
+            height={18}
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+          />
+        </button>
+      )
+    }
   </div>
 </nav>
 
@@ -287,12 +285,42 @@ const categories = Array.from(categoriesMap.entries())
     padding-left: 1rem;
   }
 
-  .sidebar-socials {
+  .sidebar-footer {
     margin-top: auto;
     padding-top: 1.5rem;
     border-top: 1px solid var(--color-border);
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .sidebar-socials {
+    display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+  }
+
+  .theme-toggle {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 </style>

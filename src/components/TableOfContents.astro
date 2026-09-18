@@ -83,9 +83,11 @@ const toc = headings.filter(h => h.depth >= 2 && h.depth <= 4);
     transition: all 0.2s ease;
     border-left: 2px solid transparent;
     padding-left: 0.5rem;
+    word-break: break-word;
   }
 
-  .toc-link:hover {
+  .toc-link:hover,
+  .toc-link.active {
     color: var(--color-accent);
     border-left-color: var(--color-accent);
   }
@@ -96,3 +98,38 @@ const toc = headings.filter(h => h.depth >= 2 && h.depth <= 4);
     border-left-color: var(--color-accent);
   }
 </style>
+
+<script>
+  // Highlight the TOC entry of the heading currently in view.
+  function initTocSpy() {
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".toc-link")
+    );
+    if (links.length === 0) return;
+
+    const setActive = (id: string | undefined) => {
+      for (const link of links) {
+        const linkId = decodeURIComponent(link.hash.slice(1));
+        link.classList.toggle("active", !!id && linkId === id);
+      }
+    };
+
+    const update = () => {
+      let current: string | undefined;
+      for (const link of links) {
+        const id = decodeURIComponent(link.hash.slice(1));
+        const heading = document.getElementById(id);
+        if (heading && heading.getBoundingClientRect().top <= 96) {
+          current = id;
+        }
+      }
+      setActive(current ?? decodeURIComponent(links[0].hash.slice(1)));
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+  }
+
+  document.addEventListener("astro:page-load", initTocSpy);
+  initTocSpy();
+</script>
