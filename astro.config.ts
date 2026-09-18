@@ -64,9 +64,20 @@ export default defineConfig({
       cssVariable: "--font-google-sans-code",
       provider: fontProviders.google(),
       fallbacks: ["monospace"],
-      weights: [300, 400, 500, 600, 700],
+      weights: [400, 500, 600, 700],
       styles: ["normal", "italic"],
-      formats: ["woff", "ttf"],
+      // ttf only: satori (OG images) cannot read woff2, and the provider
+      // stops emitting ttf files once woff2 is requested.
+      formats: ["ttf"],
+    },
+    {
+      name: "JetBrains Mono",
+      cssVariable: "--font-jetbrains-mono",
+      provider: fontProviders.google(),
+      fallbacks: ["monospace"],
+      weights: [400, 700],
+      styles: ["normal", "italic"],
+      formats: ["woff2", "ttf"],
     },
   ],
   env: {

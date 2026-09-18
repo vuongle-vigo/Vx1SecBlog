@@ -4,6 +4,8 @@
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
     @apply prose;
+    /* Mono fonts read best slightly larger than the 16px default */
+    font-size: 1.0625rem;
 
     h1,
     h2,
@@ -121,6 +123,8 @@
   /* ===== Code Blocks & Syntax Highlighting ===== */
   .astro-code {
     @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    font-family:
+      var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   html[data-theme="dark"] .astro-code {
