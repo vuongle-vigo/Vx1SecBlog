@@ -6,7 +6,7 @@ export default defineAstroPaperConfig({
     url: "https://vuongle-vigo.github.io/Vx1SecBlog/",
     title: "Vx1Sec",
     description: "Security, malware analysis, red team & blue team insights",
-    author: "Vigo",
+    author: "Vigo0x1",
     profile: "https://github.com/vuongle-vigo",
     ogImage: "default-og.jpg",
     lang: "en",
