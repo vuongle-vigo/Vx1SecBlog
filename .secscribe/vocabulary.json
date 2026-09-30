@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "79befd93-751a-4d23-ab79-dbab6212caea",
+      "term": "foundations",
+      "phonetic": "/faʊnˈdeɪʃənz/",
+      "definition_en": "the basic ideas, systems, or structures on which something is built",
+      "definition_vi": "nền tảng; những cơ sở, nguyên lý căn bản để xây dựng một hệ thống hoặc kiến thức",
+      "synonyms": [
+        "basics",
+        "fundamentals",
+        "groundwork",
+        "basis",
+        "cornerstone"
+      ],
+      "tags": [
+        "security",
+        "english"
+      ],
+      "sources": [
+        {
+          "file": "dictionary",
+          "quote": "Before learning ethical hacking, you must understand the foundations of networking and operating systems."
+        },
+        {
+          "file": "dictionary",
+          "quote": "This course covers the foundations of network security before advanced topics."
+        },
+        {
+          "file": "src/content/posts/windows-exploit-development/exploit-stack-bufferoverflow/exploit-stack-bufferoverflow.md",
+          "quote": "From section execution foundations, we knewn epilog and prolog, how to stack work. After prolog, have stack like below."
+        }
+      ],
+      "srs": {
+        "ease": 2.5,
+        "intervalDays": 1,
+        "repetitions": 1,
+        "dueDate": "2026-09-29"
+      },
+      "stats": {
+        "lapses": 0,
+        "lastReview": "2026-09-28T14:36:33.152Z"
+      },
+      "createdAt": "2026-09-28T14:28:40.625Z"
+    },
+    {
+      "id": "857b3fdf-8a1a-40aa-a320-bc6f402d7a91",
+      "term": "mitigations",
+      "phonetic": "/ˌmɪtɪˈɡeɪʃənz/",
+      "definition_en": "Actions taken to reduce the harm or risk of an attack or problem.",
+      "definition_vi": "các biện pháp giảm nhẹ, giảm thiểu rủi ro hoặc tác hại",
+      "synonyms": [
+        "countermeasures",
+        "defenses",
+        "remedies"
+      ],
+      "tags": [
+        "security",
+        "english"
+      ],
+      "sources": [
+        {
+          "file": "dictionary",
+          "quote": "The security team applied mitigations to protect the server from the vulnerability."
+        },
+        {
+          "file": "src/content/posts/windows-exploit-development/exploit-stack-bufferoverflow/exploit-stack-bufferoverflow.md",
+          "quote": "Windows has some mitigations against stack exploits: DEP, ASLR, CFG, /GS and SEHOP."
+        }
+      ],
+      "srs": {
+        "ease": 2.5,
+        "intervalDays": 0,
+        "repetitions": 0,
+        "dueDate": "2026-09-30"
+      },
+      "stats": {
+        "lapses": 0,
+        "lastReview": null
+      },
+      "createdAt": "2026-09-30T09:11:14.159Z"
+    },
+    {
+      "id": "5c0e300b-5e62-4bfa-95e3-e78d8835b3d2",
+      "term": "present",
+      "phonetic": "/prɪˈzent/",
+      "definition_en": "to show, give, or offer something, such as credentials or a finding",
+      "definition_vi": "trình bày, đưa ra, xuất trình (ví dụ: xuất trình thông tin xác thực, trình bày kết quả nghiên cứu)",
+      "synonyms": [
+        "show",
+        "submit",
+        "deliver",
+        "display",
+        "provide"
+      ],
+      "tags": [
+        "security",
+        "english"
+      ],
+      "sources": [
+        {
+          "file": "dictionary",
+          "quote": "The attacker can present a stolen session token to access the account."
+        },
+        {
+          "file": "src/content/posts/windows-exploit-development/exploit-stack-bufferoverflow/exploit-stack-bufferoverflow.md",
+          "quote": "Send payload and check esp, 0xA is not present after 0x9, so 0xA is a bad char. Keep do it to see 0xff, have list 7 bad char is `0x00, 0x0A, 0x0D, 0x25, 0x26, 0x2B, 0x3D`."
+        }
+      ],
+      "srs": {
+        "ease": 2.5,
+        "intervalDays": 0,
+        "repetitions": 0,
+        "dueDate": "2026-09-30"
+      },
+      "stats": {
+        "lapses": 0,
+        "lastReview": null
+      },
+      "createdAt": "2026-09-30T09:24:36.882Z"
+    }
+  ],
+  "daily": {
+    "2026-09-28": {
+      "new": 1,
+      "reviews": 1
+    }
+  }
+}
